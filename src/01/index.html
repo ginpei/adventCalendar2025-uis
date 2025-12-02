@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Cards</h1>
+  <div id="example">
+    <div class="CardList">
+
+      <div class="Card" style="background-image: url('https://picsum.photos/id/957/400/300.jpg');">
+        <a class="Card-baseButton" href="#/example/items/1" aria-label="Item 1"></a>
+        <input class="Card-selectCheckbox" type="checkbox" name="item" value="1">
+        <div class="Card-buttonBlock">
+          <button class="Card-button">🗑️</button>
+          <button class="Card-button">💬</button>
+        </div>
+        <div class="Card-text">
+          <h1>Hello World!</h1>
+          <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nostrum illum expedita quibusdam ratione atque
+            assumenda neque quam ad tempora nisi laborum quo sunt, illo enim cupiditate repellat tenetur molestiae
+            accusantium.
+          </p>
+        </div>
+      </div>
+  
+      <div class="Card" style="background-image: url('https://picsum.photos/id/1073/400/300.jpg');">
+        <a class="Card-baseButton" href="#/example/items/2" aria-label="Item 2"></a>
+        <input class="Card-selectCheckbox" type="checkbox" name="item" value="2">
+        <div class="Card-buttonBlock">
+          <button class="Card-button">🗑️</button>
+          <button class="Card-button">💬</button>
+        </div>
+        <div class="Card-text">
+          <h1>Hello World!</h1>
+          <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nostrum illum expedita quibusdam ratione atque
+            assumenda neque quam ad tempora nisi laborum quo sunt, illo enim cupiditate repellat tenetur molestiae
+            accusantium.
+          </p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <style>
+    .CardList {
+      display: flex;
+      gap: 16px;
+    }
+    
+    .Card {
+      background-size: cover;
+      border-radius: 4px;
+      border: 1px solid lightgray;
+      display: grid;
+      grid-template-columns: 8px auto 8px;
+      grid-template-rows: 8px auto 8px;
+      height: 150px;
+      width: 200px;
+    }
+
+    .Card-baseButton {
+      grid-area: 1 / 1 / 4 / 4;
+
+      &:hover,
+      &:focus-visible {
+        background-color: #fff3;
+      }
+    }
+
+    .Card-selectCheckbox {
+      align-self: flex-start;
+      grid-area: 2 / 2 / 3 / 3;
+      justify-self: flex-start;
+    }
+
+    .Card-buttonBlock {
+      align-self: flex-start;
+      grid-area: 2 / 2 / 3 / 3;
+      justify-self: flex-end;
+    }
+
+    .Card-button {
+      background-color: #eee9;
+      border-color: transparent;
+      border-radius: 4px;
+      border-style: solid;
+      border-width: 1px;
+
+      &:hover,
+      &:focus-visible {
+        background-color: #eee;
+        border-color: #333;
+      }
+    }
+
+    .Card-text {
+      align-self: flex-end;
+      background-color: #fffc;
+      border-radius: 4px;
+      grid-area: 2 / 2 / 3 / 3;
+      height: 3.6em;
+      justify-self: flex-end;
+      line-height: 1.2em;
+      overflow: hidden;
+      padding: 4px;
+      text-overflow: ellipsis;
+
+      h1 {
+        font-size: 1em;
+        margin: 0;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+  </style>
+</body>
+
+</html>
