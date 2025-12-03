@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>02 Dialog</title>
+</head>
+
+<body>
+  <h1>02 Dialog</h1>
+  <div id="example">
+    <p>
+      <button id="openDialogButton">Open Dialog</button>
+    </p>
+
+    <dialog id="firstDialog" class="Dialog">
+      <div class="Dialog-window">
+        <header class="Dialog-header">
+          <h1 class="Dialog-title">Hello Dialog</h1>
+          <button class="Dialog-closeButton" tabindex="0">×</button>
+        </header>
+        <div class="Dialog-body">
+          <div class="VStack">
+            <p>How to close:</p>
+            <ul>
+              <li>Hit your Escape key</li>
+              <li>Press the × button</li>
+              <li>Click outside the dialog</li>
+            </ul>
+            <p>
+              <button id="openAnotherDialogButton">Open Another Dialog</button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="secondDialog" class="Dialog">
+      <div class="Dialog-window">
+        <header class="Dialog-header">
+          <h1 class="Dialog-title">Another Dialog</h1>
+          <button class="Dialog-closeButton">×</button>
+        </header>
+        <div class="Dialog-body">
+          <div class="VStack">
+            <p>Hi</p>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+  </div>
+
+  <ul>
+    <li>Place a div for the window appearance inside the dialog in order to determine backdrop clicks</li>
+  </ul>
+
+  <script type="module">
+    /** @type {HTMLButtonElement} */
+    const elOpenDialogButton = document.getElementById('openDialogButton');
+    /** @type {HTMLDialogElement} */
+    const elFirstDialog = document.getElementById('firstDialog');
+    /** @type {HTMLButtonElement} */
+    const elOpenAnotherDialogButton = document.getElementById('openAnotherDialogButton');
+    /** @type {HTMLDialogElement} */
+    const elSecondDialog = document.getElementById('secondDialog');
+
+    /** @type {HTMLDialogElement[]} */
+    const elDialogs = [...document.querySelectorAll('dialog.Dialog')];
+    /** @type {HTMLButtonElement[]} */
+    const elCloseDialogButtons = [...document.querySelectorAll('dialog.Dialog .Dialog-closeButton')];
+
+    elOpenDialogButton.onclick = () => openModalDialog(elFirstDialog);
+    elOpenAnotherDialogButton.onclick = () => openModalDialog(elSecondDialog);
+
+    elDialogs.forEach((v) => v.onclick = (event) => {
+      /** @type {HTMLDialogElement} */
+      const elDialog = event.currentTarget;
+      /** @type {HTMLElement} */
+      const elClicked = event.target;
+
+      const backdropClicked = elClicked === elDialog;
+      if (backdropClicked) {
+        elDialog.close();
+      }
+    });
+
+    elCloseDialogButtons.forEach((v) => v.onclick = (event) => {
+      event.currentTarget.closest('dialog.Dialog')?.close();
+    });
+    
+    /**
+     * @param {HTMLDialogElement} elDialog 
+     */
+    function openModalDialog(elDialog) {
+      elDialog.showModal();
+
+      const elFirstControl = elDialog.querySelector(':is(a, button, input, select, textarea, [tabindex]):not(.Dialog-closeButton, [tabindex="-1"])');
+      elFirstControl?.focus();
+    }
+  </script>
+
+  <style>
+    dialog {
+      border-style: none;
+      background-color: transparent;
+    }
+
+    .Dialog-window {
+      background-color: white;
+      border: 1px solid #036;
+      border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      max-height: 90vh;
+      max-width: 90vw;
+      min-width: 100px;
+    }
+
+    .Dialog-header {
+      align-items: flex-start;
+      background-color: #036;
+      border-bottom: 1px solid #036;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .Dialog-title {
+      box-sizing: border-box;
+      font-size: 1em;
+      margin: 0;
+      padding: 4px 16px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+    }
+
+    .Dialog-closeButton {
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 3px;
+      box-sizing: border-box;
+      color: inherit;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-size: 1.5rem;
+      height: 40px;
+      padding: 1px;
+      width: 40px;
+
+      &:hover,
+      &:focus-visible {
+        background-color: #fff3;
+      }
+    }
+
+    .Dialog-body {
+      padding: 16px;
+    }
+
+    .VStack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      &>* {
+        margin-block: 0;
+      }
+    }
+  </style>
+</body>
+
+</html>
