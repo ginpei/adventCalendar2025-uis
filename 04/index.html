@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>04 Form submit</title>
+</head>
+<body>
+  <h1>04 Form submit</h1>
+
+  <div id="example">
+    <form id="theForm" action="#">
+      <p>
+        <label>
+          Name: <input type="text" name="username" required>
+        </label>
+      </p>
+      <p>
+        <label>
+          Email: <input type="email" name="email" required>
+        </label>
+      </p>
+      <p>
+        <button type="submit">Submit</button>
+        |
+        <button id="loadPreset" type="button">Load random preset</button>
+      </p>
+    </form>
+
+    <hr>
+
+    <table class="table">
+      <summary>Submitted Data</summary>
+      <thead>
+        <tr>
+          <th>Field Name</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody id="submittedDataBody">
+        <tr>
+          <td colspan="2"><small>(No data submitted yet)</small></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Notable points</h2>
+  <ul>
+    <li>Handle form submit event instead of button click event</li>
+    <li>Give <code>type="button"</code> to buttons that should not submit the form, if any</li>
+    <li>Prefer <code>:user-invalid</code> to <code>:invalid</code></li>
+    <li>
+      It might be a good idea to replace <code>type="email"</code> with something else
+      <ul>
+        <li>Because <code>type="email"</code> doesn't support Japanese domain name and etc.</li>
+        <li>
+          <a href="https://ginpen.com/2024/12/22/replace-input-type-email/">type=”email”は使わない方が良いんじゃないか（ちょっと良いUIおれおれAdvent Calendar 2024 – 22日目）</a>
+        </li>
+      </ul>
+    </li>
+    <li>Never think like client side validation is enough</li>
+    <li>Actually there must be much much more things we have to consider</li>
+  </ul>
+  
+  <script type="module">
+    /** @type {HTMLFormElement} */
+    const elForm = document.getElementById('theForm');
+    /** @type {HTMLButtonElement} */
+    const elLoadPreset = document.getElementById('loadPreset');
+    /** @type {HTMLTableSectionElement} */
+    const elSubmittedDataBody = document.getElementById('submittedDataBody');
+
+    elForm.onsubmit = (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(elForm);
+      const entries = [...formData.entries()];
+      renderResults(entries);
+
+      elForm.reset();
+    };
+
+    elLoadPreset.onclick = () => {
+      const presets = [
+        { username: 'alice', email: 'alice@example.com' },
+        { username: 'bob', email: 'bob@example.com' },
+        { username: 'charlie', email: 'charlie@example.com' },
+      ];
+      const preset = presets[Math.floor(Math.random() * presets.length)];
+
+      for (const [name, value] of Object.entries(preset)) {
+        const input = elForm.elements.namedItem(name);
+        if (input) {
+          input.value = value;
+        }
+      }
+    };
+
+    /**
+     * @param {Array<[string, FormDataEntryValue]>} entries 
+     */
+    function renderResults(entries) {
+      elSubmittedDataBody.innerHTML = '';
+
+      for (const [name, value] of entries) {
+        const tr = document.createElement('tr');
+
+        const tdName = document.createElement('td');
+        tdName.textContent = name;
+        tr.appendChild(tdName);
+
+        const tdValue = document.createElement('td');
+        tdValue.textContent = value;
+        tr.appendChild(tdValue);
+
+        elSubmittedDataBody.appendChild(tr);
+      }
+    }
+  </script>
+
+  <style>
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    .table th {
+      /* background-color: #f4f4f4; */
+    }
+
+    input:user-invalid {
+      border: 2px solid #f99;
+    }
+
+    button[type="submit"] {
+      font-weight: bold;
+    }
+  </style>
+</body>
+</html>
