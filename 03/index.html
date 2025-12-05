@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03 File input</title>
+</head>
+
+<body>
+  <h1>03 File input</h1>
+
+  <div id="example">
+
+    <p>
+      <label><input id="onlyImagesCheckbox" type="checkbox" name="onlyImages"> Only images</label>
+    </p>
+    <div class="block">
+      <label class="FileInput">
+        <input class="FileInput-input" type="file" name="file" multiple>
+        Click to select files or drop files here.
+      </label>
+    </div>
+
+    <ul id="resultList" class="resultList">
+      <li>
+        <small>(No files given)</small>
+      </li>
+    </ul>
+
+  </div>
+
+  <h2>Notable points</h2>
+  <ul>
+    <li>Accept body click and drop interaction to select files.</li>
+    <li>After receiving files, clear the input to receive the same file again.</li>
+    <li>Check <code>event.dataTransfer?.files</code> and <code>event.dataTransfer?.items</code> to receive dropped files.</li>
+  </ul>
+
+  <script type="module">
+    /** @type {HTMLLabelElement} */
+    const elFileInput = document.querySelector('.FileInput');
+    /** @type {HTMLInputElement} */
+    const elInput = elFileInput.querySelector('.FileInput-input');
+    /** @type {HTMLUListElement} */
+    const elResultList = document.getElementById('resultList');
+    /** @type {HTMLInputElement} */
+    const elOnlyImagesCheckbox = document.getElementById('onlyImagesCheckbox');
+
+    let onlyImages = false;
+    elOnlyImagesCheckbox.checked = onlyImages;
+    elOnlyImagesCheckbox.onchange = (event) => {
+      onlyImages = elOnlyImagesCheckbox.checked;
+      elInput.accept = onlyImages ? 'image/*' : '';
+    };
+
+    /**
+     * @param {Event} event
+     */
+    elInput.onchange = (event) => {
+      const files = elInput.files;
+      if (!files) {
+        return;
+      }
+
+      renderResultList(files);
+
+      // Clear the input to allow selecting the same file again
+      elInput.value = '';
+    };
+
+    /**
+     * @param {DragEvent} event
+     */
+    elFileInput.ondragover = (event) => {
+      event.preventDefault();
+
+      elFileInput.classList.add('dragover');
+
+      if (event.dataTransfer) {
+        if (onlyImages) {
+          const includingImage = [...event.dataTransfer?.items ?? []].some((v) => v.type.startsWith('image/'));
+          event.dataTransfer.dropEffect = includingImage ? 'copy' : 'none'
+        } else {
+          event.dataTransfer.dropEffect = 'copy';
+        }
+      }
+    }
+
+    /**
+     * @param {DragEvent} event
+     */
+    elFileInput.ondragleave = (event) => {
+      event.preventDefault();
+
+      if (!event.relatedTarget || !elFileInput.contains(event.relatedTarget)) {
+        elFileInput.classList.remove('dragover');
+      }
+    }
+
+    /**
+     * @param {DragEvent} event
+     */
+    elFileInput.ondrop = (event) => {
+      event.preventDefault();
+
+      elFileInput.classList.remove('dragover');
+
+      const allFiles = [...event.dataTransfer?.files ?? []];
+      const files = onlyImages
+        ? allFiles.filter((v) => v.type.startsWith('image/'))
+        : allFiles;
+      if (!files) {
+        return;
+      }
+
+      renderResultList(files);
+    }
+
+    /**
+     * @param {FileList} files
+     */
+    function renderResultList(files) {
+      elResultList.innerHTML = '';
+
+      if (files.length === 0) {
+        const li = document.createElement('li');
+        li.innerHTML = '<small>(No files given)</small>';
+        elResultList.appendChild(li);
+        return;
+      }
+
+      for (const file of files) {
+        const li = document.createElement('li');
+        li.textContent = file.type
+          ? `${file.name} (${file.type}) - ${file.size} bytes`
+          : `${file.name} - ${file.size} bytes`;
+        elResultList.appendChild(li);
+      }
+    }
+  </script>
+
+  <style>
+    .block {
+      display: grid;
+      height: 100px;
+      width: 400px;
+    }
+
+    .FileInput {
+      place-items: center;
+      display: grid;
+      padding: 1em;
+      border: 2px dashed #888;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      color: #555;
+
+      &:hover,
+      &:focus-within,
+      &.dragover {
+        background-color: #f0f9ff;
+        border-color: #036;
+        color: #036;
+      }
+    }
+
+    .FileInput-input {
+      border: 0;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      outline: none;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+
+    .resultList {
+      min-height: 100px;
+    }
+  </style>
+</body>
+
+</html>
